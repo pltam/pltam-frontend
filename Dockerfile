@@ -1,15 +1,11 @@
-# 1단계: 빌드
-FROM node:20 AS build
-
+# 1단계: React 앱 빌드
+FROM node:20 AS builder
 WORKDIR /app
 COPY . .
-RUN npm install
-RUN npm run build
+RUN npm install && npm run build
 
-# 2단계: 정적 파일 제공
-FROM nginx:alpine
-
-COPY --from=build /app/build /usr/share/nginx/html
+# 2단계: Nginx로 정적 파일 제공
+FROM nginx:stable-alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]
