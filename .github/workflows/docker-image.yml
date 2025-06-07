@@ -1,4 +1,4 @@
-name: Build and Push React Docker Image to GHCR
+name: Build and Deploy React Docker Image
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
+          username: ${{ secrets.GHCR_USERNAME }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract Docker metadata
