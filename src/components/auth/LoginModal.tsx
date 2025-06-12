@@ -149,13 +149,19 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                       </div>
                     </div>
                     <div className="grid grid-cols-3 gap-3">
-                      <Button variant="bordered" className="w-full">
+                      <Button variant="bordered" className="w-full" onPress={() => {
+                        window.location.href = 'https://localhost:8443/oauth2/authorization/google';
+                      }}>
                         <Icon icon="logos:google-icon" className="text-xl" />
                       </Button>
-                      <Button variant="bordered" className="w-full">
+                      <Button variant="bordered" className="w-full" onPress={() => {
+                        window.location.href = 'https://localhost:8443/oauth2/authorization/naver';
+                      }}>
                         <Icon icon="logos:naver" className="text-xl" />
                       </Button>
-                      <Button variant="bordered" className="w-full">
+                      <Button variant="bordered" className="w-full" onPress={() => {
+                        window.location.href = 'https://localhost:8443/oauth2/authorization/kakao';
+                      }}>
                         <Icon icon="logos:kakao" className="text-xl" />
                       </Button>
                     </div>
@@ -206,13 +212,19 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                       </div>
                     </div>
                     <div className="grid grid-cols-3 gap-3">
-                      <Button variant="bordered" className="w-full">
+                      <Button variant="bordered" className="w-full" onPress={() => {
+                        window.location.href = 'https://localhost:8443/oauth2/authorization/google';
+                      }}>
                         <Icon icon="logos:google-icon" className="text-xl" />
                       </Button>
-                      <Button variant="bordered" className="w-full">
+                      <Button variant="bordered" className="w-full" onPress={() => {
+                        window.location.href = 'https://localhost:8443/oauth2/authorization/naver';
+                      }}>
                         <Icon icon="logos:naver" className="text-xl" />
                       </Button>
-                      <Button variant="bordered" className="w-full">
+                      <Button variant="bordered" className="w-full" onPress={() => {
+                        window.location.href = 'https://localhost:8443/oauth2/authorization/kakao';
+                      }}>
                         <Icon icon="logos:kakao" className="text-xl" />
                       </Button>
                     </div>
