@@ -74,6 +74,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
+      console.log("로그아웃 요청 중...");
       // 서버에 로그아웃 요청하여 쿠키 삭제
       await fetch('https://api.jungho.xyz/api/v1/auth/logout', {
         method: 'POST',
