@@ -72,15 +72,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     await loadUserInfo();
   };
 
-  const logout = () => {
-    localStorage.removeItem('access_token');
-    setUser(null);
-    
-    // 쿠키에서 refresh_token도 제거 (서버에 로그아웃 요청)
-    document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.jungho.xyz;';
-    
-    // 홈으로 리다이렉트
-    window.location.href = '/';
+  const logout = async () => {
+    try {
+      // 서버에 로그아웃 요청하여 쿠키 삭제
+      await fetch('https://api.jungho.xyz/api/v1/auth/logout', {
+        method: 'POST',
+        credentials: 'include', // 쿠키 포함
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    } catch (error) {
+      console.error('로그아웃 API 요청 실패:', error);
+    } finally {
+      // API 요청 성공/실패와 관계없이 클라이언트 정리
+      localStorage.removeItem('access_token');
+      setUser(null);
+
+      // 홈으로 리다이렉트
+      window.location.href = '/';
+    }
   };
 
   const refreshUserInfo = async () => {
