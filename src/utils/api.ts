@@ -49,7 +49,7 @@ export async function apiRequest(url: string, options: RequestInit = {}): Promis
 // 사용 예시들
 export const fetchUserInfo = async () => {
     try {
-        const response = await apiRequest('https://api.jungho.xyz/api/user/info');
+        const response = await apiRequest('https://api.jungho.xyz/api/v1/user/info');
         if (response.ok) {
             const userData = await response.json();
             return userData;
@@ -64,7 +64,7 @@ export const fetchUserInfo = async () => {
 
 export const fetchUserProfile = async (userId: number) => {
     try {
-        const response = await apiRequest(`https://api.jungho.xyz/api/user/profile/${userId}`);
+        const response = await apiRequest(`https://api.jungho.xyz/api/v1/user/profile/${userId}`);
         if (response.ok) {
             const profileData = await response.json();
             return profileData;
@@ -79,7 +79,7 @@ export const fetchUserProfile = async (userId: number) => {
 
 export const createPost = async (postData: any) => {
     try {
-        const response = await apiRequest('https://api.jungho.xyz/api/posts', {
+        const response = await apiRequest('https://api.jungho.xyz/api/v1/posts', {
             method: 'POST',
             body: JSON.stringify(postData)
         });
@@ -97,7 +97,7 @@ export const createPost = async (postData: any) => {
 
 export const updateUserProfile = async (profileData: any) => {
     try {
-        const response = await apiRequest('https://api.jungho.xyz/api/user/profile', {
+        const response = await apiRequest('https://api.jungho.xyz/api/v1/user/profile', {
             method: 'PUT',
             body: JSON.stringify(profileData)
         });
@@ -115,7 +115,7 @@ export const updateUserProfile = async (profileData: any) => {
 
 export const deletePost = async (postId: number) => {
     try {
-        const response = await apiRequest(`https://api.jungho.xyz/api/posts/${postId}`, {
+        const response = await apiRequest(`https://api.jungho.xyz/api/v1/posts/${postId}`, {
             method: 'DELETE'
         });
         if (response.ok) {
