@@ -14,7 +14,7 @@ export async function apiRequest(url: string, options: RequestInit = {}): Promis
     
     // 401 에러 시 토큰 갱신 후 재시도
     if (response.status === 401) {
-        const refreshResponse = await fetch('https://api.jungho.xyz/api/auth/reissue', {
+        const refreshResponse = await fetch('https://api.jungho.xyz/api/v1/auth/reissue', {
             method: 'POST',
             credentials: 'include',
             headers: {

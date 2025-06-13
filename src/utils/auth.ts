@@ -5,7 +5,7 @@ export const handleLoginSuccess = async (): Promise<boolean> => {
     
     if (loginStatus === 'success') {
         try {
-            const response = await fetch('https://api.jungho.xyz/api/auth/reissue', {
+            const response = await fetch('https://api.jungho.xyz/api/v1/auth/reissue', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
