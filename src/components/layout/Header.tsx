@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useAppContext } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
 import SearchModal from '../search/SearchModal';
 import LoginModal from '../auth/LoginModal';
 import UserProfileSystem from '../profile/UserProfileSystem';
@@ -11,7 +12,8 @@ import { getUserById } from '../../data/mockData';
 
 const Header: React.FC = () => {
   const location = useLocation();
-  const { isAuthenticated, setIsAuthenticated, setIsSearchModalOpen } = useAppContext();
+  const { setIsSearchModalOpen } = useAppContext();
+  const { user, isAuthenticated, logout } = useAuth();
   const [isLoginModalOpen, setIsLoginModalOpen] = React.useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [searchUserProfileModal, setSearchUserProfileModal] = React.useState<{
@@ -27,8 +29,11 @@ const Header: React.FC = () => {
   };
 
   const handleLoginSuccess = () => {
-    setIsAuthenticated(true);
     setIsLoginModalOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
   };
 
   const handleSearchClick = () => {
@@ -151,20 +156,20 @@ const Header: React.FC = () => {
                     as="button"
                     className="transition-transform"
                     color="primary"
-                    name="김철수"
+                    name={user?.name || '사용자'}
                     size="sm"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face"
+                    src={user?.profileImage || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face"}
                   />
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Profile Actions" variant="flat">
                   <DropdownItem key="profile" className="h-14 gap-2">
-                    <p className="font-semibold">김철수</p>
-                    <p className="font-normal text-foreground-500">user@example.com</p>
+                    <p className="font-semibold">{user?.name || '사용자'}</p>
+                    <p className="font-normal text-foreground-500">{user?.email || ''}</p>
                   </DropdownItem>
                   <DropdownItem key="profile_page" onPress={handleMyProfileClick}>
                     프로필 관리
                   </DropdownItem>
-                  <DropdownItem key="logout" color="danger" onPress={() => setIsAuthenticated(false)}>
+                  <DropdownItem key="logout" color="danger" onPress={handleLogout}>
                     로그아웃
                   </DropdownItem>
                 </DropdownMenu>

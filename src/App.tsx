@@ -19,20 +19,29 @@ import ChatWindow from './components/chat/ChatWindow';
 import ScrollToTop from './components/common/ScrollToTop';
 import UserProfileSystem from './components/profile/UserProfileSystem';
 import { AppContextProvider, useAppContext } from './context/AppContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { handleLoginSuccess } from './utils/auth';
 
 const AppContent: React.FC = () => {
   const { isChatModalOpen, setIsChatModalOpen } = useAppContext();
+  const { login } = useAuth();
 
   // 앱 시작 시 로그인 성공 처리
   React.useEffect(() => {
-    handleLoginSuccess().then((success) => {
+    handleLoginSuccess().then(async (success) => {
       if (success) {
         console.log('로그인 완료!');
-        // 필요시 추가 처리 (예: 사용자 정보 로드)
+        const accessToken = localStorage.getItem('access_token');
+        if (accessToken) {
+          try {
+            await login(accessToken);
+          } catch (error) {
+            console.error('사용자 정보 로드 실패:', error);
+          }
+        }
       }
     });
-  }, []);
+  }, [login]);
 
   const handleChatButtonClick = () => {
     setIsChatModalOpen(!isChatModalOpen);
@@ -92,9 +101,11 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <AppContextProvider>
-      <AppContent />
-    </AppContextProvider>
+    <AuthProvider>
+      <AppContextProvider>
+        <AppContent />
+      </AppContextProvider>
+    </AuthProvider>
   );
 };
 
