@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { fetchUserInfo } from '../utils/api';
+import { fetchUserInfo, apiRequest } from '../utils/api';
 
 interface User {
   id: string;
@@ -75,13 +75,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async () => {
     try {
       console.log("로그아웃 요청 중...");
-      // 서버에 로그아웃 요청하여 쿠키 삭제
-      await fetch('https://api.jungho.xyz/api/v1/auth/logout', {
-        method: 'POST',
-        credentials: 'include', // 쿠키 포함
-        headers: {
-          'Content-Type': 'application/json'
-        }
+      // 서버에 로그아웃 요청하여 쿠키 삭제 (Authorization 헤더와 쿠키 자동 포함)
+      await apiRequest('https://api.jungho.xyz/api/v1/auth/logout', {
+        method: 'POST'
       });
     } catch (error) {
       console.error('로그아웃 API 요청 실패:', error);

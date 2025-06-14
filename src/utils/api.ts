@@ -4,6 +4,7 @@ export async function apiRequest(url: string, options: RequestInit = {}): Promis
     
     // 첫 번째 요청
     let response = await fetch(url, {
+        credentials: 'include', // 쿠키 자동 포함
         ...options,
         headers: {
             ...options.headers,
@@ -28,6 +29,7 @@ export async function apiRequest(url: string, options: RequestInit = {}): Promis
             
             // 새 토큰으로 재요청
             response = await fetch(url, {
+                credentials: 'include', // 쿠키 자동 포함
                 ...options,
                 headers: {
                     ...options.headers,
