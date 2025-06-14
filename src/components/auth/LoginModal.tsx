@@ -16,6 +16,7 @@ import {
 } from '@heroui/react';
 import {Icon} from '@iconify/react';
 import { tokenManager } from '../../utils/tokenManager';
+import { useAuth } from '../../context/AuthContext';
 
 interface LoginModalProps {
     isOpen: boolean;
@@ -24,6 +25,7 @@ interface LoginModalProps {
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({isOpen, onClose, onLoginSuccess}) => {
+    const { login } = useAuth();
     const [selected, setSelected] = React.useState<string>("login");
     const [username, setUsername] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
@@ -56,8 +58,9 @@ const LoginModal: React.FC<LoginModalProps> = ({isOpen, onClose, onLoginSuccess}
             
             if (response.ok) {
                 const data = await response.json();
-                tokenManager.setToken(data.access_token);
-                console.log('액세스 토큰 저장 완료');
+                // ✅ AuthContext의 login 함수 사용 (사용자 정보도 자동으로 로드됨)
+                await login(data.access_token);
+                console.log('로그인 완료');
             } else {
                 console.error('토큰 발급 실패');
                 throw new Error('토큰 발급 실패');
