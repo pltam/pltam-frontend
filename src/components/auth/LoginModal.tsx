@@ -33,6 +33,9 @@ const LoginModal: React.FC<LoginModalProps> = ({isOpen, onClose, onLoginSuccess}
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [agreeToTerms, setAgreeToTerms] = React.useState<boolean>(false);
 
+    // API Base URL
+    const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://api.jungho.xyz';
+
     // 개발환경 체크
     const isDevelopment = process.env.REACT_APP_DEV_DEMO_ENABLED === 'true';
     const demoUsername = process.env.REACT_APP_DEV_DEMO_USERNAME || '';
@@ -53,7 +56,7 @@ const LoginModal: React.FC<LoginModalProps> = ({isOpen, onClose, onLoginSuccess}
             formData.append('username', username);
             formData.append('password', password);
 
-            const response = await fetch('/login', {
+            const response = await fetch(`${API_BASE_URL}/login`, {
                 method: 'POST',
                 body: formData,
             });
@@ -109,7 +112,7 @@ const LoginModal: React.FC<LoginModalProps> = ({isOpen, onClose, onLoginSuccess}
             console.log('회원가입 요청 시작:', { username: signupUsername });
             console.log('FormData 내용:', Array.from(formData.entries()));
 
-            const response = await fetch('/api/v1/auth/register', {
+            const response = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
                 method: 'POST',
                 body: formData,
                 // FormData 사용시 Content-Type 헤더는 브라우저가 자동으로 설정
@@ -239,17 +242,17 @@ const LoginModal: React.FC<LoginModalProps> = ({isOpen, onClose, onLoginSuccess}
                                         </div>
                                         <div className="grid grid-cols-3 gap-3">
                                             <Button variant="bordered" className="w-full" onPress={() => {
-                                                window.location.href = 'https://api.jungho.xyz/oauth2/authorization/google';
+                                                window.location.href = `${API_BASE_URL}/oauth2/authorization/google`;
                                             }}>
                                                 <Icon icon="logos:google-icon" className="text-xl"/>
                                             </Button>
                                             <Button variant="bordered" className="w-full" onPress={() => {
-                                                window.location.href = 'https://api.jungho.xyz/oauth2/authorization/naver';
+                                                window.location.href = `${API_BASE_URL}/oauth2/authorization/naver`;
                                             }}>
                                                 <Icon icon="logos:naver" className="text-xl"/>
                                             </Button>
                                             <Button variant="bordered" className="w-full" onPress={() => {
-                                                window.location.href = 'https://api.jungho.xyz/oauth2/authorization/kakao';
+                                                window.location.href = `${API_BASE_URL}/oauth2/authorization/kakao`;
                                             }}>
                                                 <Icon icon="logos:kakao" className="text-xl"/>
                                             </Button>
@@ -309,17 +312,17 @@ const LoginModal: React.FC<LoginModalProps> = ({isOpen, onClose, onLoginSuccess}
                                         </div>
                                         <div className="grid grid-cols-3 gap-3">
                                             <Button variant="bordered" className="w-full" onPress={() => {
-                                                window.location.href = 'https://api.jungho.xyz/oauth2/authorization/google';
+                                                window.location.href = `${API_BASE_URL}/oauth2/authorization/google`;
                                             }}>
                                                 <Icon icon="logos:google-icon" className="text-xl"/>
                                             </Button>
                                             <Button variant="bordered" className="w-full" onPress={() => {
-                                                window.location.href = 'https://api.jungho.xyz/oauth2/authorization/naver';
+                                                window.location.href = `${API_BASE_URL}/oauth2/authorization/naver`;
                                             }}>
                                                 <Icon icon="logos:naver" className="text-xl"/>
                                             </Button>
                                             <Button variant="bordered" className="w-full" onPress={() => {
-                                                window.location.href = 'https://api.jungho.xyz/oauth2/authorization/kakao';
+                                                window.location.href = `${API_BASE_URL}/oauth2/authorization/kakao`;
                                             }}>
                                                 <Icon icon="logos:kakao" className="text-xl"/>
                                             </Button>
