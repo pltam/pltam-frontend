@@ -1,4 +1,6 @@
 // src/utils/auth.ts
+import { tokenManager } from './tokenManager';
+
 export const handleLoginSuccess = async (): Promise<boolean> => {
     const urlParams = new URLSearchParams(window.location.search);
     const loginStatus = urlParams.get('login');
@@ -15,7 +17,7 @@ export const handleLoginSuccess = async (): Promise<boolean> => {
             
             if (response.ok) {
                 const data = await response.json();
-                localStorage.setItem('access_token', data.access_token);
+                tokenManager.setToken(data.access_token); // tokenManager 사용
                 
                 // URL 파라미터 제거
                 window.history.replaceState({}, document.title, window.location.pathname);

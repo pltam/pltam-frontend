@@ -1,10 +1,21 @@
 // src/utils/api.ts
+import { tokenManager } from './tokenManager';
+
 export async function apiRequest(url: string, options: RequestInit = {}): Promise<Response> {
-    let accessToken = localStorage.getItem('access_token');
+    // 토큰 유효성 검사 및 필요시 갱신
+    if (!tokenManager.isTokenValid()) {
+        try {
+            await tokenManager.refreshToken();
+        } catch (error) {
+            console.debug('Token refresh failed, proceeding without token');
+        }
+    }
+
+    let accessToken = tokenManager.getToken();
     
     // 첫 번째 요청
     let response = await fetch(url, {
-        credentials: 'include', // 쿠키 자동 포함
+        credentials: 'include',
         ...options,
         headers: {
             ...options.headers,
@@ -13,34 +24,24 @@ export async function apiRequest(url: string, options: RequestInit = {}): Promis
         }
     });
     
-    // 401 에러 시 토큰 갱신 후 재시도
-    if (response.status === 401) {
-        const refreshResponse = await fetch('https://api.jungho.xyz/api/v1/auth/reissue', {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        
-        if (refreshResponse.ok) {
-            const data = await refreshResponse.json();
-            localStorage.setItem('access_token', data.access_token);
+    // 401 에러 시 토큰 갱신 후 재시도 (fallback)
+    if (response.status === 401 && accessToken) {
+        try {
+            console.log('401 에러 - 토큰 갱신 재시도...');
+            const newToken = await tokenManager.refreshToken();
             
             // 새 토큰으로 재요청
             response = await fetch(url, {
-                credentials: 'include', // 쿠키 자동 포함
+                credentials: 'include',
                 ...options,
                 headers: {
                     ...options.headers,
-                    'Authorization': `Bearer ${data.access_token}`,
+                    'Authorization': `Bearer ${newToken}`,
                     'Content-Type': 'application/json'
                 }
             });
-        } else {
-            // Refresh Token도 만료된 경우
-            localStorage.removeItem('access_token');
-            window.location.href = '/'; // 홈으로 리다이렉트
+        } catch (error) {
+            console.log('토큰 갱신 실패 - 인증 오류');
             throw new Error('Authentication failed');
         }
     }

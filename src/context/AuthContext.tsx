@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { fetchUserInfo, apiRequest } from '../utils/api';
+import { tokenManager } from '../utils/tokenManager';
 
 interface User {
   id: string;
@@ -40,23 +41,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // 앱 시작 시 토큰 확인 및 사용자 정보 로드
   useEffect(() => {
-    checkAuthStatus();
-  }, []);
-
-  const checkAuthStatus = async () => {
-    const accessToken = localStorage.getItem('access_token');
-    
-    if (accessToken) {
-      try {
-        await loadUserInfo();
-      } catch (error) {
-        console.error('사용자 정보 로드 실패:', error);
-        localStorage.removeItem('access_token');
+    const initializeAuth = async () => {
+      // 토큰 관리자 초기화
+      tokenManager.initialize();
+      
+      const accessToken = tokenManager.getToken();
+      
+      if (accessToken) {
+        try {
+          await loadUserInfo();
+        } catch (error) {
+          console.error('사용자 정보 로드 실패:', error);
+          tokenManager.clearToken();
+        }
       }
-    }
-    
-    setIsLoading(false);
-  };
+      
+      setIsLoading(false);
+    };
+
+    initializeAuth();
+  }, []);
 
   const loadUserInfo = async () => {
     try {
@@ -68,7 +72,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const login = async (accessToken: string) => {
-    localStorage.setItem('access_token', accessToken);
+    tokenManager.setToken(accessToken); // tokenManager로 토큰 관리
     await loadUserInfo();
   };
 
@@ -83,7 +87,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.error('로그아웃 API 요청 실패:', error);
     } finally {
       // API 요청 성공/실패와 관계없이 클라이언트 정리
-      localStorage.removeItem('access_token');
+      tokenManager.clearToken(); // tokenManager로 토큰 삭제
       setUser(null);
 
       // 홈으로 리다이렉트

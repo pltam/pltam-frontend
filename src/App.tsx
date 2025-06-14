@@ -21,26 +21,35 @@ import UserProfileSystem from './components/profile/UserProfileSystem';
 import { AppContextProvider, useAppContext } from './context/AppContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { handleLoginSuccess } from './utils/auth';
+import { tokenManager } from './utils/tokenManager';
 
 const AppContent: React.FC = () => {
   const { isChatModalOpen, setIsChatModalOpen } = useAppContext();
   const { login } = useAuth();
 
-  // 앱 시작 시 로그인 성공 처리
+  // OAuth 로그인 성공 처리 (URL 파라미터 확인)
   React.useEffect(() => {
-    handleLoginSuccess().then(async (success) => {
-      if (success) {
-        console.log('로그인 완료!');
-        const accessToken = localStorage.getItem('access_token');
-        if (accessToken) {
-          try {
-            await login(accessToken);
-          } catch (error) {
-            console.error('사용자 정보 로드 실패:', error);
+    const handleOAuthSuccess = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const loginStatus = urlParams.get('login');
+      
+      if (loginStatus === 'success') {
+        const success = await handleLoginSuccess();
+        if (success) {
+          console.log('OAuth 로그인 완료!');
+          const accessToken = tokenManager.getToken();
+          if (accessToken) {
+            try {
+              await login(accessToken);
+            } catch (error) {
+              console.error('OAuth 로그인 후 사용자 정보 로드 실패:', error);
+            }
           }
         }
       }
-    });
+    };
+
+    handleOAuthSuccess();
   }, [login]);
 
   const handleChatButtonClick = () => {
