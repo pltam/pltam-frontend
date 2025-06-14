@@ -58,6 +58,7 @@ const LoginModal: React.FC<LoginModalProps> = ({isOpen, onClose, onLoginSuccess}
 
             const response = await fetch(`${API_BASE_URL}/login`, {
                 method: 'POST',
+                credentials: 'include',
                 body: formData,
             });
 
