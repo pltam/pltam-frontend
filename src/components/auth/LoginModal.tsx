@@ -15,6 +15,7 @@ import {
     CardBody
 } from '@heroui/react';
 import {Icon} from '@iconify/react';
+import { tokenManager } from '../../utils/tokenManager';
 
 interface LoginModalProps {
     isOpen: boolean;
@@ -42,6 +43,31 @@ const LoginModal: React.FC<LoginModalProps> = ({isOpen, onClose, onLoginSuccess}
     const demoPassword = process.env.REACT_APP_DEV_DEMO_PASSWORD || '';
     const demoName = process.env.REACT_APP_DEV_DEMO_NAME || '데모 사용자';
 
+    // 토큰 처리 함수 (소셜 로그인과 동일한 로직)
+    const handleTokenAfterLogin = async (): Promise<void> => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/v1/auth/reissue`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                tokenManager.setToken(data.access_token);
+                console.log('액세스 토큰 저장 완료');
+            } else {
+                console.error('토큰 발급 실패');
+                throw new Error('토큰 발급 실패');
+            }
+        } catch (error) {
+            console.error('토큰 처리 오류:', error);
+            throw error;
+        }
+    };
+
     const handleLogin = async () => {
         if (!username || !password) {
             alert('아이디와 비밀번호를 입력해주세요.');
@@ -63,7 +89,8 @@ const LoginModal: React.FC<LoginModalProps> = ({isOpen, onClose, onLoginSuccess}
             });
 
             if (response.ok) {
-                // 로그인 성공 시 리다이렉트나 토큰 처리
+                // 로그인 성공 후 토큰 처리 (소셜 로그인과 동일한 로직)
+                await handleTokenAfterLogin();
                 onLoginSuccess();
             } else {
                 alert('로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.');
@@ -307,7 +334,7 @@ const LoginModal: React.FC<LoginModalProps> = ({isOpen, onClose, onLoginSuccess}
                                             <div className="absolute inset-0 flex items-center">
                                                 <div className="w-full border-t border-divider"></div>
                                             </div>
-                                            <div className="relative flex justify-center text-xs">
+                                            <div className="relative flex justify center text-xs">
                                                 <span className="bg-content1 px-2 text-foreground-500">소셜 로그인</span>
                                             </div>
                                         </div>
