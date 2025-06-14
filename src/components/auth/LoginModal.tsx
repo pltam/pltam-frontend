@@ -48,27 +48,21 @@ const LoginModal: React.FC<LoginModalProps> = ({isOpen, onClose, onLoginSuccess}
         setIsLoading(true);
 
         try {
+            // Spring Security는 기본적으로 form 데이터를 받습니다
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('password', password);
+
             const response = await fetch('/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    username: username,
-                    password: password,
-                }),
+                body: formData,
             });
 
             if (response.ok) {
-                const data = await response.json();
-                // 로그인 성공 시 토큰 등을 localStorage에 저장할 수 있습니다
-                if (data.token) {
-                    localStorage.setItem('authToken', data.token);
-                }
+                // 로그인 성공 시 리다이렉트나 토큰 처리
                 onLoginSuccess();
             } else {
-                const errorData = await response.json();
-                alert(errorData.message || '로그인에 실패했습니다.');
+                alert('로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.');
             }
         } catch (error) {
             console.error('로그인 오류:', error);
@@ -108,16 +102,21 @@ const LoginModal: React.FC<LoginModalProps> = ({isOpen, onClose, onLoginSuccess}
         setIsLoading(true);
 
         try {
+            const formData = new FormData();
+            formData.append('username', signupUsername);
+            formData.append('password', signupPassword);
+
+            console.log('회원가입 요청 시작:', { username: signupUsername });
+            console.log('FormData 내용:', Array.from(formData.entries()));
+
             const response = await fetch('/api/v1/auth/register', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    username: signupUsername,
-                    password: signupPassword,
-                }),
+                body: formData,
+                // FormData 사용시 Content-Type 헤더는 브라우저가 자동으로 설정
             });
+
+            console.log('회원가입 응답 상태:', response.status);
+            console.log('회원가입 응답 URL:', response.url);
 
             if (response.ok) {
                 alert('회원가입이 완료되었습니다. 로그인해주세요.');
@@ -129,6 +128,7 @@ const LoginModal: React.FC<LoginModalProps> = ({isOpen, onClose, onLoginSuccess}
                 setAgreeToTerms(false);
             } else {
                 const errorData = await response.json();
+                console.error('회원가입 실패 응답:', errorData);
                 alert(errorData.message || '회원가입에 실패했습니다.');
             }
         } catch (error) {
@@ -304,7 +304,7 @@ const LoginModal: React.FC<LoginModalProps> = ({isOpen, onClose, onLoginSuccess}
                                                 <div className="w-full border-t border-divider"></div>
                                             </div>
                                             <div className="relative flex justify-center text-xs">
-                                                <span className="bg-content1 px-2 text-foreground-500">또는</span>
+                                                <span className="bg-content1 px-2 text-foreground-500">소셜 로그인</span>
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-3 gap-3">
