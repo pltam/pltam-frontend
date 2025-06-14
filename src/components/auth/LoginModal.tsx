@@ -82,7 +82,7 @@ const LoginModal: React.FC<LoginModalProps> = ({isOpen, onClose, onLoginSuccess}
             formData.append('username', username);
             formData.append('password', password);
 
-            const response = await fetch(`${API_BASE_URL}/login`, {
+            const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
                 method: 'POST',
                 credentials: 'include',
                 body: formData,
